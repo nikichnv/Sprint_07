@@ -7,4 +7,5 @@ public class CourierCreateRequest {
     private String login;
     private String password;
     private String firstName;
+    private String id;
 }

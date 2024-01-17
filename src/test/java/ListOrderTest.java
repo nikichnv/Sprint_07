@@ -3,9 +3,11 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 
 
-public class ListOrder {
+public class ListOrderTest {
 
     private static OrderClient orderClient;
     @Before
@@ -16,7 +18,8 @@ public class ListOrder {
                 .then()
                 .statusCode(SC_OK)
                 .and()
-                .assertThat().body("orders", notNullValue());
+                .assertThat().body("orders", notNullValue())
+                .body("orders", hasSize(greaterThan(0)));
     }
 
 }

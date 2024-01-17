@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 public class OrderClient extends RestClient {
 
     private OrderCreateRequest orderCreateRequest;
+    public static final String ORDERS_HANDLE = "/api/v1/orders";
 
     public void setOrder(OrderCreateRequest orderCreateRequest) {
         this.orderCreateRequest = orderCreateRequest;
@@ -17,12 +18,12 @@ public class OrderClient extends RestClient {
         return defaultRestSpecification()
                 .body(orderCreateRequest)
                 .when()
-                .post("/api/v1/orders");
+                .post(ORDERS_HANDLE);
     }
     @Step("Получить список заказов")
     public  Response getOrders(){
         return defaultRestSpecification()
-                .get("/api/v1/orders");
+                .get(ORDERS_HANDLE);
     }
 
 }

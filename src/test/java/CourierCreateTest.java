@@ -1,22 +1,22 @@
-import body.CourierBody;
+import courierApi.CourierBody;
 import client.CourierClient;
+import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class CourierCreate {
+public class CourierCreateTest {
     private static CourierBody courierBody;
     String login = RandomStringUtils.random(7);
     String password = RandomStringUtils.random(7);
     String firstname = RandomStringUtils.random(7);
-    private static List<String> courierIds = new ArrayList<>();
+    static List<ValidatableResponse> couriersData = new ArrayList<>();
+
 
     @Before
     public void setUp() {
@@ -25,18 +25,18 @@ public class CourierCreate {
 
     @Test
     public void canCreateCourier() {
-        courierBody.create(login, password, firstname)
-                .assertThat().statusCode(SC_CREATED).and().body("ok", equalTo(true));
+        ValidatableResponse response = courierBody.create(login, password, firstname);
+                response.assertThat().statusCode(SC_CREATED).and().body("ok", equalTo(true));
+        courierBody.getId(login, password);
+        couriersData.add(response);
     }
 
     @Test
     public void duplicateCourier() {
-        courierBody.create("login", "password", "firstname");
-        courierBody.create("login", "password", "firstname")
+        ValidatableResponse response = courierBody.create("login", "password", "firstname")
                 .statusCode(SC_CONFLICT)
                 .and()
                 .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
-
     }
 
     @Test
@@ -57,19 +57,20 @@ public class CourierCreate {
 
     @Test
     public void courierWithoutFirstname() {
-        courierBody.create(login, password, null)
+        ValidatableResponse response = courierBody.create(login, password, null)
                 .statusCode(SC_CREATED)
                 .and()
                 .body("ok", equalTo(true));
+        courierBody.getId(login, password);
+        couriersData.add(response);
     }
 
     @AfterClass
     public static void tearDown() {
-        // Удаление всех курьеров по их ID
-        for (String courierId : courierIds) {
-            courierBody.delete(courierId).log().all();
-            System.out.println("Курьер с ID " + courierId + " удален.");
-        }
 
+        for (ValidatableResponse response : couriersData) {
+            courierBody.delete(response);
+        }
+        couriersData.clear();
     }
 }
