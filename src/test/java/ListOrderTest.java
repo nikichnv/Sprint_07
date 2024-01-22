@@ -1,4 +1,6 @@
 import client.OrderClient;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Before;
 import org.junit.Test;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -13,6 +15,8 @@ public class ListOrderTest {
     @Before
     public void setUp(){orderClient = new OrderClient();}
     @Test
+    @DisplayName("Получение списка заказов(позитив)")
+    @Description("Проверка получения списка заказов")
     public void getOrders(){
         orderClient.getOrders()
                 .then()

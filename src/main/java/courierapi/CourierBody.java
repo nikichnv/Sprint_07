@@ -1,4 +1,4 @@
-package courierApi;
+package courierapi;
 
 import client.CourierClient;
 import dto.CourierCreateRequest;

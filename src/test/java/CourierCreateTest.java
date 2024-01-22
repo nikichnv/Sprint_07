@@ -1,5 +1,7 @@
-import courierApi.CourierBody;
+import courierapi.CourierBody;
 import client.CourierClient;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.AfterClass;
@@ -24,6 +26,8 @@ public class CourierCreateTest {
     }
 
     @Test
+    @DisplayName("Создание курьера")
+    @Description("Создание курьера с валидным телом запроса")
     public void canCreateCourier() {
         ValidatableResponse response = courierBody.create(login, password, firstname);
                 response.assertThat().statusCode(SC_CREATED).and().body("ok", equalTo(true));
@@ -32,14 +36,22 @@ public class CourierCreateTest {
     }
 
     @Test
+    @DisplayName("Проверка невозможности создания двух одинаковых курьеров")
+    @Description("Проверка невозможности создания двух курьеров с одинаковым login")
     public void duplicateCourier() {
-        ValidatableResponse response = courierBody.create("login", "password", "firstname")
+        ValidatableResponse responsea = courierBody.create("logina", "passworda", "firstname");
+        ValidatableResponse responseb = courierBody.create("logina", "passworda", "firstname")
                 .statusCode(SC_CONFLICT)
                 .and()
                 .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
+        courierBody.getId("logina", "passworda");
+        courierBody.delete(responsea);
+
     }
 
     @Test
+    @DisplayName("Создание курьера без логина")
+    @Description("Проверка валидации, создание курьера со значение обязательного поля login = null")
     public void courierWithoutLogin() {
         courierBody.create(null, "password", "firstname")
                 .statusCode(SC_BAD_REQUEST)
@@ -48,6 +60,8 @@ public class CourierCreateTest {
     }
 
     @Test
+    @DisplayName("Создание курьера без пароля")
+    @Description("Проверка создания курьера без пароля")
     public void courierWithoutPassword() {
         courierBody.create(login, null, "firstname")
                 .statusCode(SC_BAD_REQUEST)
@@ -56,6 +70,8 @@ public class CourierCreateTest {
     }
 
     @Test
+    @DisplayName("Создание курьера без имени")
+    @Description("Проверка возможности создание курьера без параметра firstName в теле запроса")
     public void courierWithoutFirstname() {
         ValidatableResponse response = courierBody.create(login, password, null)
                 .statusCode(SC_CREATED)

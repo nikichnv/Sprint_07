@@ -1,5 +1,7 @@
-import courierApi.CourierBody;
+import courierapi.CourierBody;
 import client.CourierClient;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
@@ -12,7 +14,7 @@ import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
 
-public class LoginTestTest {
+public class LoginTest {
     private static CourierBody courierBody;
     String login = RandomStringUtils.random(7);
     String password = RandomStringUtils.random(7);
@@ -23,6 +25,8 @@ public class LoginTestTest {
         courierBody = new CourierBody(new CourierClient());
     }
     @Test
+    @DisplayName("Авторизация курьера")
+    @Description("Проверки возможности авторизаваться курьером при введении валидных данных")
     public void canLoginCourier(){
         ValidatableResponse response = courierBody.create(login, password, firstname);
         courierBody.login(login, password)
@@ -34,6 +38,8 @@ public class LoginTestTest {
         courierBody.delete(response);
     }
     @Test
+    @DisplayName("Авторизация без логина")
+    @Description("Проверка возможности авторизоваться с пустым значением поля login")
     public void loginWithoutLogin(){
         courierBody.login("", password)
                 .statusCode(SC_BAD_REQUEST)
@@ -42,6 +48,8 @@ public class LoginTestTest {
 
     }
     @Test
+    @DisplayName("Авторизация без password")
+    @Description("Проверка возможности авторизоваться с пустым значением поля password")
     public void loginWithoutPassword(){
         courierBody.login(login, "")
                 .statusCode(SC_BAD_REQUEST)
@@ -49,6 +57,8 @@ public class LoginTestTest {
                 .body("message", equalTo("Недостаточно данных для входа"));
     }
     @Test
+    @DisplayName("Авторизация несуществующим пользователем")
+    @Description("Проверка валидации параметров при входе, авторизация с несуществующими login,password")
     public void loginWrongLogin(){
         courierBody.login(login, password)
                 .statusCode(SC_NOT_FOUND)

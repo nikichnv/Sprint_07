@@ -2,6 +2,8 @@
 
 import client.OrderClient;
 import dto.OrderCreateRequest;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +39,8 @@ public class OrderTest {
 
 
     @Test
+    @DisplayName("Создание заказа самоката с разным цветом")
+    @Description("Проверка создания заказа самоката с разным цветом")
     public void createOrder() {
         orderClient.setOrder(orderCreateRequest);
         orderClient.create().then().statusCode(SC_CREATED).and().assertThat().body("track", notNullValue());
